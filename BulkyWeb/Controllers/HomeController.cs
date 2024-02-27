@@ -13,12 +13,14 @@ namespace BulkyWeb.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index() // defines the index action of the page
         {
+            // if we dont pass any 'view name' as the parameter, by default it takes the methodName (here index), and from the 'controller name' (HomeController) will be considered
+            // hence naming the viewFiles properly is important
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Privacy() // defines the privacy action of the page
         {
             return View();
         }
