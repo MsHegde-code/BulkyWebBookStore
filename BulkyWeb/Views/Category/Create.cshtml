@@ -6,6 +6,9 @@
 			<h2>Create Category</h2>
 			<hr />
 		</div>
+		@* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+
+		@* <input asp-for="Id-name" hidden/> used when the 'Id' name is different *@
 		<div class="mb-3 row p-1">
 			<label asp-for=Name class="p-0"></label>
 			<input asp-for="Name" class="form-control" />
@@ -28,3 +31,10 @@
 		</div>
 	</div>
 </form>
+
+@* client side input validation. As the validation is a script, we add it in the script section *@
+@section Scripts{
+	@{
+	<partial name="_ValidationScriptsPartial"/>
+	}
+}

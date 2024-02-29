@@ -1,0 +1,21 @@
+﻿@* all the reusable components should be kept in a partial view, so we can update here and the changes will be reflected where the partial view is used
+ *@
+
+
+@if (TempData["Success"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript">
+    toastr.success('@TempData["Success"]');
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script type="text/javascript">
+        toastr.error('@TempData["Success"]');
+    </script>
+}
