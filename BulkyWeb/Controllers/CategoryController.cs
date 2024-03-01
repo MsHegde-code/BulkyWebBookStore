@@ -97,9 +97,9 @@ namespace BulkyWeb.Controllers
 		}
 
 		[HttpPost, ActionName("Delete")] //setting the name of this method explicitly as the name is changed to DeletePOST
-		public IActionResult DeletePOST(int? id)
+		public IActionResult DeletePOST(int? id) // we can also use (Category obj) as parameter
 		{
-            Category obj = _db.Categories.Find(id);
+            Category? obj = _db.Categories.Find(id);
             if(obj == null)
             {
                 return NotFound();
