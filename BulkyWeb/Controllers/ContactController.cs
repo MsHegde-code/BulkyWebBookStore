@@ -1,5 +1,6 @@
-﻿using BulkyWeb.Data;
-using BulkyWeb.Models;
+﻿using Bulky.DataAccess.Data;
+using Bulky.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyWeb.Controllers
@@ -22,8 +23,10 @@ namespace BulkyWeb.Controllers
             {
                 _db.Contact.Add(contact);
                 _db.SaveChanges();
+                TempData["Success"] = "Response Recorded";
                 return RedirectToAction("Index", "Contact");
             }
+            TempData["Error"] = "Couldn't Record Response";
             return View();
         }
     }

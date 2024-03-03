@@ -1,0 +1,31 @@
+﻿@page
+@model practiceRazor.Pages.categories.IndexModel
+
+
+<table class="table-bordered">
+	<div>
+		<a asp-page="/categories/Create" class="btn btn-primary">Create Category</a>
+	</div>
+	<thead>
+		<tr>
+			<th>Category Name</th>
+			<th>Display Order</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var obj in Model.Categories.OrderBy(u=>u.DisplayOrder))
+		{
+			<tr>
+				<td>@obj.Name</td>
+				<td>@obj.DisplayOrder</td>
+				<td>
+					<a asp-page="/categories/Edit" class="btn btn-primary" asp-route-id="@obj.Id">Edit</a>
+				</td>
+				<td>
+					<a asp-page="/categories/Delete" class="btn btn-danger" asp-route-id="@obj.Id">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

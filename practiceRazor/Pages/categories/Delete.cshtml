@@ -1,0 +1,13 @@
+﻿@page
+@model practiceRazor.Pages.categories.DeleteModel
+
+<form method="post">
+	<label asp-for="Category.Name"></label>
+	<input asp-for="Category.Name" disabled />
+
+	<label asp-for="Category.DisplayOrder" class="mt-2"></label>
+	<input asp-for="Category.DisplayOrder" class="mb-2" disabled />
+
+	<button class="btn btn-danger">Delete</button>
+	<a asp-page="/categories/Index" class="btn btn-secondary">Back</a>
+</form>
