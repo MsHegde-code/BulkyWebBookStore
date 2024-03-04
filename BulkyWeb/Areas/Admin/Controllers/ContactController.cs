@@ -1,19 +1,20 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.Models;
-
 using Microsoft.AspNetCore.Mvc;
 
-namespace BulkyWeb.Controllers
+namespace BulkyWeb.Areas.Admin.Controllers
 {
-    public class ContactController : Controller
+	[Area("Admin")]
+	public class ContactController : Controller
     {
         private readonly ApplicationDbContext _db;
-        public ContactController(ApplicationDbContext db) {
+        public ContactController(ApplicationDbContext db)
+        {
             _db = db;
         }
         public IActionResult Index()
         {
-            
+
             return View();
         }
         [HttpPost]

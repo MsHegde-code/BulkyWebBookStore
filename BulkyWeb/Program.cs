@@ -13,7 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options=>
 // we need to register the service in 'dependency injection container' as we are asking it in the CategoryController
 // the 1st parameter takes interface, and 2nd takes the impementation of the interface, 
 //i.e when the categorycontroller asks for implementation of ICategoryCont it knows that it needs to provide CategoryRepository
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
 
@@ -37,7 +37,7 @@ app.UseAuthorization();
 // defining the default route settings of the controller, tells where the request needs to be routed 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
 
 
 // ex: https:// {domain:portno} / controller / action / id (optional)  -> this is the default url pattern

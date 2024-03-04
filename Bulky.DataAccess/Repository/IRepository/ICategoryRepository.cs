@@ -11,7 +11,6 @@ namespace Bulky.DataAccess.Repository.IRepository
 	{
 		// inherting the IRepository on dedicated 'category' class, as wkt this interface belongs to Category class
 		// this interface declares the methods which are dedicated to Category class
-		void Save();
 		void Update(Category category);
 	}
 }

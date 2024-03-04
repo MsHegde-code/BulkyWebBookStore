@@ -23,14 +23,11 @@ namespace Bulky.DataAccess.Repository
 
 
 		//implementing the methods of the ICategoryRepository which are dedicated methods of this class
-		public void Save()
-		{
-			_db.SaveChanges();
-		}
-
+	
 		public void Update(Category category)
 		{
-			_db.Update(category);
+			//Categories is the table name in Db, we need to mention which table we are performing the update operation
+			_db.Categories.Update(category);
 		}
 	}
 }
