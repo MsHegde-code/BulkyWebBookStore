@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bulky.Models
 {
@@ -43,6 +44,19 @@ namespace Bulky.Models
         [DisplayName("Price for 100+")]
         [Range(1, 1000)]
         public int Price100 { get; set; }
+
+        //adding reference/foriegn key relation, 
+        // (as we want to relate this entity with Category table's 'ID' we create a )
+        [DisplayName("Category ID")]
+        public int CategoryId { get; set; } 
+
+        [ForeignKey("CategoryId")] // the "Name" denotes that the above property is the FK of this table
+        public Category Category { get; set; } // navigation property, to tell the EFC about FK
+        //that this table has foriegn key to category table
+
+
+        //image 
+        public string ImageUrl { get; set; }
 
     }
 }

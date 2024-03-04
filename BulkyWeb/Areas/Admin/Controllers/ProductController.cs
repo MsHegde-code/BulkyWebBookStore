@@ -50,6 +50,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 return NotFound();
 
             var UserProduct = _unitOfWork.Product.Get(u=>u.Id==id);
+            if (UserProduct == null)
+                return NotFound();
             return View(UserProduct);
         }
         [HttpPost]
@@ -71,6 +73,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
             if(id==0 || id==null)
                 return NotFound();
             var UserProduct = _unitOfWork.Product.Get(u=>u.Id == id);
+            if (UserProduct == null)
+                return NotFound();
             return View(UserProduct);
         }
         [HttpPost]
