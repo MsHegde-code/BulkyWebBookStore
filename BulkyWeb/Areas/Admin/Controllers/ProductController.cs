@@ -1,7 +1,9 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -26,20 +28,46 @@ namespace BulkyWeb.Areas.Admin.Controllers
         //create Page
         public IActionResult Create()
         {
-            return View();
+            var CategoryList = _unitOfWork.Category.GetAll().Select(u=>
+                new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+
+            // ViewBag -> sending the data using viewbag // make sure to match the 'key' in the view
+            //ViewBag.CategoryList = CategoryList;
+
+            // using ViewModels
+            ProductVM productVM = new ProductVM
+            {
+                Product = new Product(),
+                CategoryList = CategoryList
+            };
+
+            return View(productVM);
         }
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductVM productVM)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(product);
+                _unitOfWork.Product.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["Success"] = "New Book Added successfully";
                 return RedirectToAction("Index");
             }
-            TempData["Error"] = "Couldn't add a new Book";
-            return View();
+
+            //to populate the list when the model state is Invalid
+            productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u=>
+                new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+			
+			TempData["Error"] = "Couldn't add a new Book";
+            return View(productVM);
         }
 
         //Edit Page
