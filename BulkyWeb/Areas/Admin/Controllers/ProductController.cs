@@ -12,10 +12,15 @@ namespace BulkyWeb.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        
+        //to deal with the files, and save it in the wwwroot folder
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
         List<Product> Products { get; set; }
-        public ProductController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;   
         }
 
         //Index Page
@@ -25,10 +30,11 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return View(Products);
         }
         
-        //create Page
-        public IActionResult Create()
+        //combining the create Page and Edit page
+        public IActionResult UpSert(int? id)
         {
-            var CategoryList = _unitOfWork.Category.GetAll().Select(u=>
+			// can also directly use "IEnumerable<SelectListItem>"
+			var CategoryList = _unitOfWork.Category.GetAll().Select(u=>
                 new SelectListItem
                 {
                     Text = u.Name,
@@ -38,27 +44,71 @@ namespace BulkyWeb.Areas.Admin.Controllers
             // ViewBag -> sending the data using viewbag // make sure to match the 'key' in the view
             //ViewBag.CategoryList = CategoryList;
 
-            // using ViewModels
+            // using ViewModels to get the category list dropdown
             ProductVM productVM = new ProductVM
             {
                 Product = new Product(),
                 CategoryList = CategoryList
             };
 
-            return View(productVM);
+            //create functionality
+            if(id==null || id == 0)
+            {
+				//pass the viewModel object to the view
+				return View(productVM);
+			}
+            //update
+            else
+            {   
+                //retrieve a particular record for edit functionality
+                productVM.Product = _unitOfWork.Product.Get(u=>u.Id==id);
+                return View(productVM);
+            }
+            
         }
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult UpSert(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(productVM.Product);
+                string wwwRootPath = _webHostEnvironment.WebRootPath; //path of the wwwroot folder
+                if (file != null)
+                {
+                    //fileName = RandomGuid+FileExtension
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+                    //product folder path inside wwwroot
+                    string productPath = Path.Combine(wwwRootPath,@"images\product" );
+
+                    if(!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    {
+						//delete old image, the file path \images\product\imgName.jpg has the address from wwwroot
+						var oldImgPath = Path.Combine(wwwRootPath, productVM.Product.ImageUrl.TrimStart('\\'));
+
+                        if(System.IO.File.Exists(oldImgPath))
+                               System.IO.File.Delete(oldImgPath);
+                    }
+                    // add new image
+                    using(var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                    productVM.Product.ImageUrl = @"\images\product\" + fileName;
+                }
+                if (productVM.Product.Id == 0) {
+					_unitOfWork.Product.Add(productVM.Product);
+					TempData["Success"] = "Product Added successfully";
+				}
+                else
+                {
+					_unitOfWork.Product.Update(productVM.Product);
+					TempData["Success"] = "Product Updated successfully";
+				}
                 _unitOfWork.Save();
-                TempData["Success"] = "New Book Added successfully";
                 return RedirectToAction("Index");
             }
 
-            //to populate the list when the model state is Invalid
+            //to populate the list when the model state is Invalid, as we are loading the create view
             productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u=>
                 new SelectListItem
                 {
@@ -70,30 +120,30 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return View(productVM);
         }
 
-        //Edit Page
+        ////Edit Page
 
-        public IActionResult Edit(int? id)
-        {
-            if (id == 0 || id == null)
-                return NotFound();
+        //public IActionResult Edit(int? id)
+        //{
+        //    if (id == 0 || id == null)
+        //        return NotFound();
 
-            var UserProduct = _unitOfWork.Product.Get(u=>u.Id==id);
-            if (UserProduct == null)
-                return NotFound();
-            return View(UserProduct);
-        }
-        [HttpPost]
-        public IActionResult Edit(Product product) {
-            if (ModelState.IsValid)
-            {
-                _unitOfWork.Product.Update(product);
-                _unitOfWork.Save();
-                TempData["success"] = "Book details Updated Successfully";
-                return RedirectToAction("Index");
-            }
-            TempData["Error"] = "Couldn't Update Book details";
-            return View();
-        }
+        //    var UserProduct = _unitOfWork.Product.Get(u=>u.Id==id);
+        //    if (UserProduct == null)
+        //        return NotFound();
+        //    return View(UserProduct);
+        //}
+        //[HttpPost]
+        //public IActionResult Edit(Product product) {
+        //    if (ModelState.IsValid)
+        //    {
+        //        _unitOfWork.Product.Update(product);
+        //        _unitOfWork.Save();
+        //        TempData["success"] = "Book details Updated Successfully";
+        //        return RedirectToAction("Index");
+        //    }
+        //    TempData["Error"] = "Couldn't Update Book details";
+        //    return View();
+        //}
 
         //Delete page
         public IActionResult Delete(int? id)

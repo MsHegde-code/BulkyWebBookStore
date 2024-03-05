@@ -10,8 +10,11 @@ namespace Bulky.Models.ViewModels
 {
 	public class ProductVM
 	{
+        // we need Product model reference for the data fields
         public Product Product { get; set; }
 
+
+        //Category list for the dropdown menu
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
     }
