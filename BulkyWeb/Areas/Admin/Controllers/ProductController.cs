@@ -1,4 +1,5 @@
 ﻿using Bulky.DataAccess.Data;
+using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.ViewModels;
@@ -146,8 +147,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
         //    TempData["Error"] = "Couldn't Update Book details";
         //    return View();
         //}
-
-        //Delete page
+        //old delete
+        /*Delete page
         public IActionResult Delete(int? id)
         {
             if(id==0 || id==null)
@@ -173,5 +174,43 @@ namespace BulkyWeb.Areas.Admin.Controllers
 			TempData["Success"] = "Book Deleted Successfully";
 			return RedirectToAction("Index");
 		}
+        */
+        // api calls must be inside the controller
+        // to check the api : localhost/admin/product/getall
+
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            Products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new {data=Products});
+        }
+
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var productToBeDeleted = _unitOfWork.Product.Get(u=>u.Id==id);
+            if(productToBeDeleted == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            var oldImgPath = Path.Combine(_webHostEnvironment.WebRootPath,
+                                            productToBeDeleted.ImageUrl.TrimStart('\\'));
+
+            if (System.IO.File.Exists(oldImgPath))
+                System.IO.File.Delete(oldImgPath);
+
+            _unitOfWork.Product.Remove(productToBeDeleted);
+            _unitOfWork.Save();
+            
+            return Json(new { success = true, message = "Product Deleted successfully" });
+        }
+
+        // to get the data table we need to call this api
+        #endregion
+
     }
 }
+
+
