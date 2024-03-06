@@ -18,7 +18,9 @@
 						<input asp-for="Product.Id" hidden />
 						
 						@*the hidden field helps in binding the value to the corresponding property in the model during form submission*@
-						@*this input tag is for the image url, when we post the form, the model will send the data to this input tag*@
+						@*this input tag is for the image url, when we post the form, the model will send the data to this input tag
+							and we can handle it in the controller
+						*@
 						<input asp-for="Product.ImageUrl" hidden/>
 
 						<div class="form-floating py-2 col-12">

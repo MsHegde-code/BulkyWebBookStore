@@ -26,7 +26,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         //Index Page
         public IActionResult Index()
         {
-            Products = _unitOfWork.Product.GetAll().ToList();
+            Products = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
             return View(Products);
         }
         
@@ -34,6 +34,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult UpSert(int? id)
         {
 			// can also directly use "IEnumerable<SelectListItem>"
+            // this categoryList is used for drop-down menu
 			var CategoryList = _unitOfWork.Category.GetAll().Select(u=>
                 new SelectListItem
                 {
@@ -69,6 +70,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult UpSert(ProductVM productVM, IFormFile? file)
         {
+            // first process the img, then check whether its edit or add operation based on the id
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath; //path of the wwwroot folder
@@ -107,7 +109,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
-
+            // if model state is not valid
             //to populate the list when the model state is Invalid, as we are loading the create view
             productVM.CategoryList = _unitOfWork.Category.GetAll().Select(u=>
                 new SelectListItem
