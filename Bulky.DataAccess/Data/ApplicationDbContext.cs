@@ -1,4 +1,6 @@
 ﻿using Bulky.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 // basic configuration for the EntityFrameWorkCore(EFC),
@@ -6,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Bulky.DataAccess.Data
 {
     // every class must implement the DbContext, which is the built-in class of the EFC which is in Microsoft.Entity.FrameWorkCore package
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
         // what ever we config options we add in appDbContext that needs to passed into the base class "DbContext" also
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :base(options)
@@ -17,15 +19,19 @@ namespace Bulky.DataAccess.Data
         // this single line of code creates the table in the database with the help of EFC
         public DbSet<Category> Categories{ get; set; }
         public DbSet<Contact> Contact { get; set; }
-
         public DbSet<Product> Products { get; set; }
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
 
         //using the built-in OnModelCreating from EFC to seed the data to the database, 
         //only one 'OnModelCreating()' method can be declared.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Category>().HasData(
+            //this is generated to use for the Identity
+			base.OnModelCreating(modelBuilder);
+
+			modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1 },
                 new Category { Id = 2, Name = "SciFi", DisplayOrder = 2 },
                 new Category { Id = 3, Name = "History", DisplayOrder = 3 },

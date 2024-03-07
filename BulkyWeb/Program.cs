@@ -2,13 +2,20 @@ using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                                                  //we removed the parameter as we dont want the verified account registration, hence anyone can register and login
+
+builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddRazorPages(); // added to get the implementation of the Identity razor pages of signup and ligin
 
 // we need to register the service in 'dependency injection container' as we are asking it in the CategoryController
 // the 1st parameter takes interface, and 2nd takes the impementation of the interface, 
@@ -32,9 +39,12 @@ app.UseStaticFiles(); // configures all the static files under wwwroot, and it c
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // defining the default route settings of the controller, tells where the request needs to be routed 
+
+app.MapRazorPages(); // to map the razor pages implementation as we are using MVC and the identity implementation is razor pages. We need to have that support
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
