@@ -15,7 +15,7 @@ namespace Bulky.DataAccess.Repository.IRepository
 		void Remove(T entity);
 		void RemoveRange(IEnumerable<T> entities);//remove the set of records
 		T Get(Expression<Func<T, bool>> filter, // returns a single record using LINQ expression in parameter
-				string? includeProperties = null); //for include properties
+				string? includeProperties = null); //for include properties, as its not mandatory to have a include properties
 		IEnumerable<T> GetAll(string? includeProperties = null); // returns set of records, hence IEnumerable<T> is the return type
 							//for include properties
 	}

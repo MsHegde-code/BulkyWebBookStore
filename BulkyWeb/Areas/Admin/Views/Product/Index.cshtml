@@ -1,6 +1,6 @@
 ﻿@model List<Product>
 
-<div class="card shadow border-0 mt-4">
+<div class="card shadow border-0 mt-4 mb-4">
     <div class="card-header bg-secondary bg-gradient ml-0 py-3 ">
         <div class="row">
             <div class="col-12 text-center">
@@ -8,7 +8,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body p-4">
+    <div class="card-body p-4 mb-4">
         <div class="container">
             <div class="row pb-3">
                 <div class="col-12 text-end">
@@ -17,7 +17,8 @@
                     </a>
                 </div>
             </div>
-            <table id="tblData" class="table table-bordered table-striped" width="100%">
+            @*here we are using the DataTable plugin which is executed by product.js file*@
+            <table id="tblData" class="table table-bordered table-striped " width="100%">
                 <thead>
                     <tr>
                 
