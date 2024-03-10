@@ -3,6 +3,8 @@ using Bulky.DataAccess.Repository;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Bulky.Utility;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-                                                  //we removed the parameter as we dont want the verified account registration, hence anyone can register and login
+//we removed the parameter as we dont want the verified account registration, hence anyone can register and login
 
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
 builder.Services.AddRazorPages(); // added to get the implementation of the Identity razor pages of signup and ligin
 
@@ -21,7 +27,7 @@ builder.Services.AddRazorPages(); // added to get the implementation of the Iden
 // the 1st parameter takes interface, and 2nd takes the impementation of the interface, 
 //i.e when the categorycontroller asks for implementation of ICategoryCont it knows that it needs to provide CategoryRepository
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 
 var app = builder.Build();
