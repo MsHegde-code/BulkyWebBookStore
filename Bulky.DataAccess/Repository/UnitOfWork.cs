@@ -14,11 +14,19 @@ namespace Bulky.DataAccess.Repository
 
         public ICategoryRepository Category { get; private set; }
         public IProductRepository Product { get; private set; }
+        public ICompanyRepository Company { get; private set; }
+
+        public IShoppingCartRepository ShoppingCart { get; private set; }
+
+        public IApplicationUserRepository User { get; private set; }
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             Category = new CategoryRepository(_db); //asking for the implementation of CateRepo
             Product = new ProductRepository(_db);   //asking for the implementation of ProdRepo
+            Company = new CompanyRepository(_db);
+            ShoppingCart = new ShoppingCartRepository(_db);
+            User = new ApplicationUserRepository(_db);
         }
 
         public void Save()

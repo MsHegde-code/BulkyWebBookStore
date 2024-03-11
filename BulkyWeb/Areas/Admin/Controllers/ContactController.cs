@@ -1,11 +1,14 @@
 ﻿using Bulky.DataAccess.Data;
 using Bulky.Models;
+using Bulky.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	public class ContactController : Controller
+    [Authorize(Roles = SD.Role_Admin)]
+    public class ContactController : Controller
     {
         private readonly ApplicationDbContext _db;
         public ContactController(ApplicationDbContext db)

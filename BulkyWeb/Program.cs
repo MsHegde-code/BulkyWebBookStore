@@ -29,7 +29,12 @@ builder.Services.AddRazorPages(); // added to get the implementation of the Iden
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = $"/Identity/Account/Login";
+    options.LogoutPath = $"/Identity/Account/Logout";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline -> tells how request needs to be processed
