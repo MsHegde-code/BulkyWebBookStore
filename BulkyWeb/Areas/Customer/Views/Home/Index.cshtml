@@ -15,7 +15,7 @@
 							<h6 class="card-text text-center text-opacity-75">List Price:
 								<span class="text-decoration-line-through">@product.ListPrice.ToString("c")</span></h6>
 							<h6 class="card-text text-center text-opacity-75">As Low as: @product.ListPrice.ToString("c")</h6>
-							<a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary form-control">Details</a>
+							<a asp-action="Details" asp-route-productId="@product.Id" class="btn btn-primary form-control">Details</a>
 						</div>
 					</div>
 				</div>

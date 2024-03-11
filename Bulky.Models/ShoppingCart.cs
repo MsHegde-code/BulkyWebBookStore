@@ -11,6 +11,7 @@ namespace Bulky.Models
 {
     public class ShoppingCart
     {
+        [Key]
         public int Id { get; set; }
         [Range(1,1000,ErrorMessage ="enter value between 1-1000")]
         public int Count { get; set; } //count of items

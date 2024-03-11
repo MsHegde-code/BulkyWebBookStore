@@ -19,7 +19,8 @@ namespace Bulky.DataAccess.Repository
 
         public void Update(ShoppingCart item)
         {
-            _db.Update(item);
+            //
+            _db.ShoppingCarts.Update(item);
         }
     }
 }
