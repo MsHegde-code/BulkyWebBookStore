@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Bulky.DataAccess.Repository
@@ -29,30 +30,44 @@ namespace Bulky.DataAccess.Repository
 			DbSet.Add(entity);
 		}
 								//LINQ expression		//include() populating properties based on FK
-		public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+		public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked=false)
 		{
 			//_db.Categories == DbSet
+			IQueryable<T> query;// we need to perform the LINQ operations on DbSet, so we assign it to IQueryable<>
 
-			IQueryable<T> query = DbSet; // we need to perform the LINQ operations on DbSet, so we assign it to IQueryable<>
-			query = query.Where(filter);// apply the LINQ operation on the query
-
-			if (!string.IsNullOrWhiteSpace(includeProperties))
+            if (tracked)
 			{
-				foreach (var property in includeProperties
-					.Split(',', StringSplitOptions.RemoveEmptyEntries))
-				{
-					query = query.Include(property);
-				}
-			}
-			return query.FirstOrDefault();//retrieve the first occurance
-		}
+                 query = DbSet; 
+            }
+			else{
+                query = DbSet.AsNoTracking(); // we are telling EFC, not to track the object retrieved from Get() method
+            }
 
-		public IEnumerable<T> GetAll(string? includeProperties = null)
+
+            query = query.Where(filter);// apply the LINQ operation on the query
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                foreach (var property in includeProperties
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(property);
+                }
+            }
+            return query.FirstOrDefault();//retrieve the first occurance
+        }
+
+		public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
 		{
 			// remember, when retriving a record, we need to have a query
 
 			IQueryable<T> query = DbSet;
-			if (!string.IsNullOrWhiteSpace(includeProperties))
+
+			if(filter != null)
+			{
+                query = query.Where(filter);//filter for LINQ expression
+            }
+				
+            if (!string.IsNullOrWhiteSpace(includeProperties))
 			{
 				foreach (var property in includeProperties
 					.Split(',',StringSplitOptions.RemoveEmptyEntries))

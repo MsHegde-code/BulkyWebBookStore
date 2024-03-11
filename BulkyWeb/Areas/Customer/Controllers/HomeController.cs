@@ -67,11 +67,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
             {
                 cartFromDb.Count += shoppingCart.Count; //updating the current book count
                 _unitOfWork.ShoppingCart.Update(cartFromDb);  //passing "cartFromDb" because we are updating the existing item
+                TempData["success"] = "Cart Updated";
             }
             else
             {
                 //new cart
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                TempData["success"] = "Items Added to Cart";
             }
             _unitOfWork.Save();
             return RedirectToAction(nameof(Index));
