@@ -1,12 +1,30 @@
 $(document).ready(function () {
-    loadDataTable();
+    var url = window.location.search;
+    //filtering the dataTable based on status
+    if (url.includes("inprocess"))
+        loadDataTable("inprocess");
+
+    else if (url.includes("pending"))
+        loadDataTable("pending");
+
+    else if (url.includes("completed"))
+        loadDataTable("completed");
+
+    else if (url.includes("approved"))
+        loadDataTable("approved");
+
+    else
+        loadDataTable("all");
+
+
+    //loadDataTable();
 });
 
 var dataTable;
 
-function loadDataTable() {
+function loadDataTable(status) {
     dataTable = $('#tblData').dataTable({
-        "ajax": { "url": "/Admin/Order/getall" },
+        "ajax": { "url": "/Admin/Order/getall?status=" + status },
         "columns": [
             { data: "id", "width":"10%" },
             { data: "name", "width": "20%" },
@@ -18,7 +36,7 @@ function loadDataTable() {
                 data: "id",
                 "render": function (data) {
                     return `<div class="w-75 btn-group" role="group">
-                            <a href="/Admin/order/detail?orderId=${data}" class="btn btn-primary mx-2">Details</a>
+                            <a href="/Admin/Order/Details?orderId=${data}" class="btn btn-primary mx-2">Details</a>
 
                 </div>`
                 },"width":"15%"

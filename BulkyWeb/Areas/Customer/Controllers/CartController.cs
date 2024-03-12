@@ -179,7 +179,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 			//checking if the current user is Company user, if yes we can skip payment
 			//the companyID can be null or have value, so we need to use GetValueOrDefault()
-			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+			if (applicationUser.CompanyId.GetValueOrDefault() == 0) //if company id is zero
 			{
 				//customer account
 				shoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;
@@ -210,8 +210,11 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				_unitOfWork.OrderDetail.Add(orderDetail);
 				_unitOfWork.Save();
 			}
-			if (applicationUser.CompanyId.GetValueOrDefault() == 0)
-			{   //regular customer, payment capture logic, ////stripe logic (from stripe documentation)
+
+            ////stripe logic (from stripe documentation)
+			
+            if (applicationUser.CompanyId.GetValueOrDefault() == 0)
+			{   //regular customer, payment capture logic, 
 				StripeConfiguration.ApiKey = "sk_test_tR3PYbcVNZZ796tH88S4VQ2u";
 				var domain = "https://localhost:7086";
 				var options = new SessionCreateOptions
@@ -271,7 +274,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 			OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == id,
 																includeProperties: "ApplicationUser");
 
-			if(orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
+			if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment)
 			{
 				//order from regular customer
 				var service = new SessionService();
@@ -284,20 +287,19 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					id, //orderId
 					session.Id,                 //SessionId
 					session.PaymentIntentId);//paymentIntentId is updating in the Db
-					
-					_unitOfWork.OrderHeader.UpdateStatus(id,SD.StatusApproved, SD.PaymentStatusApproved);
+
+					_unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
 					_unitOfWork.Save();
 				}
 
-
-				//clearing out the shoppingCart after payment
-				//retrieving the cart of that particular orderHeader account
-				List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u =>
-					u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
-				_unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
-				_unitOfWork.Save();
 			}
-
+			//clearing out the shoppingCart after payment
+			//retrieving the cart of that particular orderHeader account
+			List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u =>
+				u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+			_unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+			_unitOfWork.Save();
+			
 			return View(id);
 		}
 
