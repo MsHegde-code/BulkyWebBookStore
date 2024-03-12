@@ -11,10 +11,14 @@ namespace Bulky.DataAccess.Repository.IRepository
 		//we implement the ICategory, IProduct when we implement IUnitOfWork
 		ICategoryRepository Category{ get; }
 		IProductRepository Product { get; }
-
 		ICompanyRepository Company { get; }
-		IShoppingCartRepository ShoppingCart { get; }
 
+		//cart
+		IShoppingCartRepository ShoppingCart { get; }
+		IOrderDetailRepository OrderDetail { get; }
+		IOrderHeaderRepository OrderHeader { get; }
+
+		//user
 		IApplicationUserRepository ApplicationUser { get; }
 		void Save();
 	}

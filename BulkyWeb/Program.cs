@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,8 +36,16 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
-var app = builder.Build();
 
+//configuration of stripe settings, from the appSettings.json into the stripeSettings.cs
+//all the api keys will be configured to the properties
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+
+
+
+
+//main 
+var app = builder.Build();
 // Configure the HTTP request pipeline -> tells how request needs to be processed
 if (!app.Environment.IsDevelopment()) // env denotes which env variable we are using in launchSettings, a custom env can also be used
 {
@@ -47,6 +56,11 @@ if (!app.Environment.IsDevelopment()) // env denotes which env variable we are u
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // configures all the static files under wwwroot, and it can be accessed
+
+
+//configuring the API key 
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+
 
 app.UseRouting();
 
