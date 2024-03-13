@@ -85,11 +85,14 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 		public IActionResult Minus(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
+			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked:true);//here tracking is set to true, as this obj is manipulate in further lines of code
 			if (cartFromDb.Count <= 1)
 			{
 				_unitOfWork.ShoppingCart.Remove(cartFromDb);
-			}
+                //handle the session for the cart item number, as the cartFromDb is removed, we need to subtract 1 from the count(as its already removed)
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count() - 1);
+            }
 			else
 			{
 				cartFromDb.Count -= 1;
@@ -102,9 +105,15 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
 		public IActionResult Remove(int cartId)
 		{
-			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId);
-			_unitOfWork.ShoppingCart.Remove(cartFromDb);
-			_unitOfWork.Save();
+			var cartFromDb = _unitOfWork.ShoppingCart.Get(u => u.Id == cartId, tracked:true);
+			
+            //handle the session for the cart item number, as the cartFromDb is removed at the next line
+			//, we need to subtract 1 from the count(assume its already removed)
+            HttpContext.Session.SetInt32(SD.SessionCart,
+                _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cartFromDb.ApplicationUserId).Count()-1);
+
+            _unitOfWork.ShoppingCart.Remove(cartFromDb);
+            _unitOfWork.Save();
 			return RedirectToAction(nameof(Index));
 		}
 
@@ -154,20 +163,17 @@ namespace BulkyWeb.Areas.Customer.Controllers
 			var claimsIdentity = (ClaimsIdentity)User.Identity;
 			var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-			shoppingCartVM.shoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, //always match with application userID
+            //to populate the data using the Application user to the OrderHeader
+            shoppingCartVM.OrderHeader.ApplicationUserId = userId;
+            //we dont need to populate the applicationUser 'obj' as EFC will handle it by navigation Property
+
+
+            shoppingCartVM.shoppingCartList = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == userId, //always match with application userID
 																	includeProperties: "Product");
 
-			//to populate the data using the Application user to the OrderHeader
-			shoppingCartVM.OrderHeader.ApplicationUserId = userId;
-			//we dont need to populate the applicationUser 'obj' as EFC will handle it by navigation Property
-
-
-			ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);//applicationUser IDs to check the type of user 
 
 			//retrieve the data from ApplicationUser inside OrderHeader       
 			shoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
-
-
 
 			//calculate the total price of all items
 			foreach (var cart in shoppingCartVM.shoppingCartList)
@@ -176,10 +182,11 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				shoppingCartVM.OrderHeader.OrderTotal += (cart.Price);
 
 			}
+            ApplicationUser applicationUser = _unitOfWork.ApplicationUser.Get(u => u.Id == userId);//applicationUser IDs to check the type of user 
 
-			//checking if the current user is Company user, if yes we can skip payment
-			//the companyID can be null or have value, so we need to use GetValueOrDefault()
-			if (applicationUser.CompanyId.GetValueOrDefault() == 0) //if company id is zero
+                                                                                                   //checking if the current user is Company user, if yes we can skip payment
+                                                                                                   //the companyID can be null or have value, so we need to use GetValueOrDefault()
+            if (applicationUser.CompanyId.GetValueOrDefault() == 0) //if company id is zero
 			{
 				//customer account
 				shoppingCartVM.OrderHeader.OrderStatus = SD.StatusPending;

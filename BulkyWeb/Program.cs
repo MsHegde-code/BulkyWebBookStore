@@ -42,9 +42,18 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 
+//to create sessions for user
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 
-//main 
+
+
 var app = builder.Build();
 // Configure the HTTP request pipeline -> tells how request needs to be processed
 if (!app.Environment.IsDevelopment()) // env denotes which env variable we are using in launchSettings, a custom env can also be used
@@ -53,6 +62,8 @@ if (!app.Environment.IsDevelopment()) // env denotes which env variable we are u
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+//request pipelines
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // configures all the static files under wwwroot, and it can be accessed
@@ -61,15 +72,20 @@ app.UseStaticFiles(); // configures all the static files under wwwroot, and it c
 //configuring the API key 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
-
 app.UseRouting();
 
+//security 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// defining the default route settings of the controller, tells where the request needs to be routed 
+//session
+app.UseSession();
+
 
 app.MapRazorPages(); // to map the razor pages implementation as we are using MVC and the identity implementation is razor pages. We need to have that support
+
+
+// defining the default route settings of the controller, tells where the request needs to be routed 
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");

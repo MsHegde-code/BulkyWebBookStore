@@ -24,7 +24,7 @@ namespace Bulky.Models
         public Product Product { get; set; }
 
 
-        
+        //to know which userId owns this cart items
         public string ApplicationUserId { get; set; }//userId
         [ForeignKey("ApplicationUserId")]
         [ValidateNever]
