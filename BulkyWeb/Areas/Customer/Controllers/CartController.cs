@@ -248,7 +248,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					options.LineItems.Add(sessionLineItem);
 				}
 
-
 				var service = new SessionService();
 				//session is generated after the stripe payment
 				// it consists of SessionId, paymentIntentId so we can update in the table
@@ -264,9 +263,22 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				Response.Headers.Add("Location", session.Url);
 				return new StatusCodeResult(303); //redirecting to new URL
 			}
-
 			return RedirectToAction(nameof(OrderConfirmation), new { id = shoppingCartVM.OrderHeader.Id });
 		}
+
+
+		//if user hits back button on stripe page, the redudant sessionId gets removed
+		//private SessionAfterExpiration CancelUserPayment(string domain)
+		//{
+		//	//checking for payment status
+		//	var CheckOrderFromDb = _unitOfWork.OrderHeader.Get(u => u.Id == shoppingCartVM.OrderHeader.Id);
+		//	if (CheckOrderFromDb.OrderStatus == SD.StatusPending && CheckOrderFromDb.PaymentStatus == SD.StatusPending)
+		//	{
+		//		_unitOfWork.OrderHeader.Remove(CheckOrderFromDb);
+		//		_unitOfWork.Save();
+		//		TempData["error"] = "Payment Failed !!";
+		//	}
+		//}
 
 		//orderConfirmation is used to check whether the payment is successful or not
 		public IActionResult OrderConfirmation(int id)//orderID
@@ -291,7 +303,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					_unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
 					_unitOfWork.Save();
 				}
-
 			}
 			//clearing out the shoppingCart after payment
 			//retrieving the cart of that particular orderHeader account

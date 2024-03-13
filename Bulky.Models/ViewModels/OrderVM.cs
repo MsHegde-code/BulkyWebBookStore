@@ -10,6 +10,6 @@ namespace Bulky.Models.ViewModels
 	{
         //as we want to retrieve the order summary details, we require both orderHeader and orderDetail(list is chosen as has collection of items)
         public OrderHeader OrderHeader { get; set; }
-        public IEnumerable<OrderDetail> OrderDetails { get; set; }
+        public IEnumerable<OrderDetail> OrderDetail { get; set; }
     }
 }

@@ -77,7 +77,7 @@ namespace Bulky.DataAccess.Repository
 			}
 
 			
-			return query;//removed the ToList() -> as it was throwing exception of includeProperty
+			return query.ToList();
 		}
 
 		public void Remove(T entity)

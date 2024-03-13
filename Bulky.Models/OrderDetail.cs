@@ -19,7 +19,7 @@ namespace Bulky.Models
         public int OrderHeaderId { get; set; }
         [ForeignKey("OrderHeaderId")]
         [ValidateNever]
-        public OrderHeader orderHeader { get; set; }
+        public OrderHeader OrderHeader { get; set; }
 
 
 
@@ -28,7 +28,10 @@ namespace Bulky.Models
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
         [ValidateNever]
-        public Product product { get; set; }
+
+
+        //always make user to use the same Property-Name in the "include properties"
+        public Product Product { get; set; }
 
         
         //related to items in the order

@@ -172,6 +172,8 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+
+                //assign all the applicationUser fields to the user
                 user.City = Input.City;
                 user.State =  Input.State;
                 user.PhoneNumber = Input.PhoneNumber;
@@ -192,7 +194,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
                     
                     
-
+                    //if no roles is selected, then assign that user as 'customer role'
                     if (!string.IsNullOrEmpty(Input.Roles))
                     {
                         await _userManager.AddToRoleAsync(user, Input.Roles);
