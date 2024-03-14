@@ -27,8 +27,8 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
         {
             await _signInManager.SignOutAsync();
 
-            //clearing the session objects and data when user logs out
-            HttpContext.Session.Clear();
+            /*clearing the session objects and data when user logs out
+            HttpContext.Session.Clear();*/
 
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)

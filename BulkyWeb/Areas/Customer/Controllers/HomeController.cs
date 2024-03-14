@@ -23,15 +23,15 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public IActionResult Index() // defines the index action of the page
         {
-            //getting userId
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);//we dont user value here, as it can be 'null' without a user(signed out)
+            /*//cart number
+            //var claimsIdentity = (ClaimsIdentity)User.Identity;
+            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);//we dont user value here, as it can be 'null' without a user(signed out)
 
-            if(claim != null)
-            {
-                HttpContext.Session.SetInt32(SD.SessionCart,
-                    _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).Count()); //(claim.Value consists of userId)
-            }
+            //if(claim != null)
+            //{
+            //    HttpContext.Session.SetInt32(SD.SessionCart,
+            //        _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value).Count()); //(claim.Value consists of userId)
+            //}*/
 
 
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties:"Category");
