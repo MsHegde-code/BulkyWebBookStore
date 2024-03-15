@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Stripe.Checkout;
+using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace BulkyWeb.Areas.Customer.Controllers
@@ -37,11 +38,16 @@ namespace BulkyWeb.Areas.Customer.Controllers
 				//as we are accessing this object in the view, we need to create it 
 			};
 
+			IEnumerable<ProductImage> productImages = _unitOfWork.ProductImage.GetAll();
+
+
 
 			//you can have multiple items in your cart, 
 			//so you need to iterate over each and calculate its price for quantity
 			foreach (var cart in shoppingCartVM.shoppingCartList)
 			{
+				cart.Product.ProductImage = productImages.Where(u=>u.ProductId == cart.ProductId).ToList();
+
 				//storing the total in the Price property of the model(NOTMAPPED)
 				cart.Price = CalculateTotal(cart);
 

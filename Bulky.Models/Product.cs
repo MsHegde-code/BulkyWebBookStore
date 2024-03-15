@@ -55,12 +55,10 @@ namespace Bulky.Models
 
 		[ValidateNever]
 		public Category Category { get; set; } // navigation property, to tell the EFC about FK
-											   //that this table has foriegn key to category table
+                                               //that this table has foriegn key to category table
 
 
-		//image 
-		[ValidateNever]
-		public string ImageUrl { get; set; }
-
+        [ValidateNever]
+        public List<ProductImage> ProductImage { get; set; }
     }
 }

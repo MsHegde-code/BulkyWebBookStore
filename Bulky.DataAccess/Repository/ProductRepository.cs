@@ -20,26 +20,34 @@ namespace Bulky.DataAccess.Repository
         }
         public void Update(Product product)
         {
-            _db.Products.Update(product); //can also be used or we may be more specific about the update condition
-            //var ObjFromDb = _db.Products.FirstOrDefault(u=>u.Id == product.Id);
-            //if (ObjFromDb != null)
-            //{
-            //    ObjFromDb.Title = product.Title;
-            //    ObjFromDb.Description = product.Description;
-            //    ObjFromDb.CategoryId = product.CategoryId;
-            //    ObjFromDb.ListPrice = product.ListPrice;
-            //    ObjFromDb.Price = product.Price;
-            //    ObjFromDb.Price100 = product.Price100;
-            //    ObjFromDb.Price50 = product.Price50;
-            //    ObjFromDb.Author = product.Author;
-            //    ObjFromDb.ISBN = product.ISBN;
+            _db.Products.Update(product);
+            //can also be used or we may be more specific about the update condition
 
-            //    //like update the image url if its not null
-            //    if (product.ImageUrl != null)
-            //    {
-            //        ObjFromDb.ImageUrl = ObjFromDb.ImageUrl;
-            //    }
-            //}
+
+
+            var ObjFromDb = _db.Products.FirstOrDefault(u => u.Id == product.Id);
+            if (ObjFromDb != null)
+            {
+                ObjFromDb.Title = product.Title;
+                ObjFromDb.Description = product.Description;
+                ObjFromDb.CategoryId = product.CategoryId;
+                ObjFromDb.ListPrice = product.ListPrice;
+                ObjFromDb.Price = product.Price;
+                ObjFromDb.Price100 = product.Price100;
+                ObjFromDb.Price50 = product.Price50;
+                ObjFromDb.Author = product.Author;
+                ObjFromDb.ISBN = product.ISBN;
+                ObjFromDb.ProductImage = product.ProductImage;
+
+
+                //like update the image url if its not null
+                //if (product.ImageUrl != null)
+                //{
+                //    ObjFromDb.ImageUrl = ObjFromDb.ImageUrl;
+                //}
+            }
+
+
         }
     }
 }
