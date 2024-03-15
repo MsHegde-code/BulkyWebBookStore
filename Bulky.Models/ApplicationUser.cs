@@ -27,5 +27,9 @@ namespace Bulky.Models
         [ForeignKey("CompanyId")]
         [ValidateNever] //while creating a user, we dont want to validate
         public Company Company { get; set; }
+
+        [NotMapped]
+        public string Role{ get; set; }
+
     }
 }

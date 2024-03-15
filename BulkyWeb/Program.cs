@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Stripe;
+using Bulky.DataAccess.DbInitializer;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,7 @@ builder.Services.AddRazorPages(); // added to get the implementation of the Iden
 //i.e when the categorycontroller asks for implementation of ICategoryCont it knows that it needs to provide CategoryRepository
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IDbInitializer, DbInitilizer>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -86,8 +89,10 @@ app.UseAuthorization();
 //session
 app.UseSession();
 
-
 app.MapRazorPages(); // to map the razor pages implementation as we are using MVC and the identity implementation is razor pages. We need to have that support
+
+//to initial the db
+SeedDatabase();
 
 
 // defining the default route settings of the controller, tells where the request needs to be routed 
@@ -101,3 +106,11 @@ app.MapControllerRoute(
 // if nothing is given in the url after the domain, by default the controller and action will be considered 
 
 app.Run();
+
+void SeedDatabase()
+{
+    using( var scope = app.Services.CreateScope())
+    {
+        scope.ServiceProvider.GetRequiredService<IDbInitializer>().Initialize();
+    }
+}

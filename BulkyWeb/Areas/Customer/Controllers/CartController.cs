@@ -273,7 +273,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 			return RedirectToAction(nameof(OrderConfirmation), new { id = shoppingCartVM.OrderHeader.Id });
 		}
 
-
+		/*
 		//if user hits back button on stripe page, the redudant sessionId gets removed
 		//private SessionAfterExpiration CancelUserPayment(string domain)
 		//{
@@ -286,7 +286,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 		//		TempData["error"] = "Payment Failed !!";
 		//	}
 		//}
-
+		*/
 		//orderConfirmation is used to check whether the payment is successful or not
 		public IActionResult OrderConfirmation(int id)//orderID
 		{
@@ -311,6 +311,12 @@ namespace BulkyWeb.Areas.Customer.Controllers
 					_unitOfWork.Save();
 				}
 			}
+
+			//clearing out the session cart value
+			HttpContext.Session.Clear();
+
+
+
 			//clearing out the shoppingCart after payment
 			//retrieving the cart of that particular orderHeader account
 			List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u =>

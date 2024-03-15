@@ -1,0 +1,69 @@
+﻿@model RolesVM
+
+<div class="card shadow border-0 mt-4 mb-4">
+	<div class="card-header bg-secondary bg-gradient ml-0 py-3 ">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Manage User Role</h2>
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4 mb-4">
+		<div class="row pb-3">
+			<div class="col-12 text-end">
+				<form method="post">
+					<input asp-for="applicationUser.Id" hidden />
+					<div class="form-floating py-2 col-12">
+						<input asp-for="applicationUser.Name" disabled class="form-control border-0 shadow" />
+						<label asp-for="applicationUser.Name" class="ms-2"></label>
+					</div>
+					<div class="form-floating py-2 col-12">
+						<select asp-for="applicationUser.Role" class="form-select border-0 shadow" asp-items="@Model.RoleList">
+
+						</select>
+						<label asp-for="applicationUser.Role" class="ms-2"></label>
+					</div>
+					@{
+						var companyVisible = "display:none;";
+					}
+					@if (Model.applicationUser.Role == SD.Role_Company)
+					{
+						companyVisible = "display:block";
+					}
+					<div class="form-floating py-2 col-12">
+						<select style="@companyVisible" class="form-select border-0 shadow" asp-for="applicationUser.CompanyId" asp-items="@Model.Companies">
+						</select>
+					</div>
+					<div class="row">
+						<div class="col-6 col-md-3">
+							<button type="submit" class="btn btn-primary form-control">Update Role</button>
+						</div>
+						<div class="col-6 col-md-3">
+							<a asp-controller="User" asp-action="Index" class="btn btn-outline-primary border form-control">
+								<i class="bi bi-box-arrow-left"></i> Back to User List
+							</a>
+						</div>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+	@*this script is to control the display feature of company dropdown, i.e when company is selected as user, another dropdown will be shown to select the company*@
+	<script>
+		$(document).ready(function () {
+			$('#applicationUser_Role').change(function () {
+				var selection = $('#applicationUser_Role Option:Selected').text();
+				if (selection == 'Company') {
+					$('#applicationUser_CompanyId').show();
+				}
+				else {
+					$('#applicationUser_CompanyId').hide();
+				}
+			})
+		})
+	</script>
+}
